@@ -1,0 +1,30 @@
+{
+    "API_TOKEN": "6920090319:AAH--fD-Pez7ujaQ6XfYzmrKyFTHygWCJvI",
+    
+    "ALLOWED_USERS": [6098929358],
+
+    "PROGRAM_PATHS": {
+        "MajesticLauncher": "C:\\Users\\Wayne\\AppData\\Local\\MajesticLauncher\\MajesticLauncher.exe",
+        "Dota2": "C:\\Users\\Wayne\\Desktop\\Dota2.url",
+        "Steam": "E:\\steam\\steam.exe",
+        "Discord": "C:\\Users\\Wayne\\AppData\\Local\\DiscordPTB\\Update.exe --processStart DiscordPTB.exe",
+        "Telegram": "E:\\Telegram Desktop\\Telegram.exe",
+        "RUST":"E:\\steam\\steamapps\\common\\Rust\\Rust.exe",
+        "VSC":"C:\\Users\\Wayne\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe",
+        "FIREFOX":"C:\\Program Files\\Mozilla Firefox\\firefox.exe"},
+    
+    "notes_file": "notes.json",
+
+    "botVersion" : "22.0.2",
+    "dataUpdate" : "31.07.2024",
+    
+    "urls": {
+        "open_url_youtube": "https://www.youtube.com",
+        "open_url_music": "https://music.youtube.com",
+        "open_url_kino": "https://hdrezka.ag/",
+        "open_url_anime": "https://jut.su/anime/",
+        "open_url_anime2":"https://animix.lol/",
+        "open_url_serials":"https://uaserial.tv/",
+        "open_url_GPT": "https://chatgpt.com/",
+        "open_url_NEKTO":"https://nekto.me/audiochat/"}
+}
