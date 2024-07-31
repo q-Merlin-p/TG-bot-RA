@@ -22,7 +22,7 @@ from .browser import open_url, get_url_from_action
 from .sendtime import send_uptime, format_uptime
 from .sleep import sleep_computer
 from .record import press_pause_button
-from .tvers import get_telebot_version 
+from .tvers import get_telebot_version, BotInfo
 from .errorLogger import is_logger_active, logger
 from .notes import new_note_command, delete_note_command, view_notes_command, load_notes, save_notes, edit_note_command, process_edit_title_step, process_edit_content_step
 

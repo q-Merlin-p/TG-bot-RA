@@ -216,7 +216,7 @@ def callback_handler(call):
                 'ban_hero': ban_hero,
                 'pick_hero': pick_hero,
                 'pick_hero_rez': pick_hero_rez,
-                'cls': lambda msg: (os.system('cls' if os.name == 'nt' else 'clear'), bot.send_message(msg.chat.id, '🧼 Консоль была очищена')),
+                'cls': lambda msg: (os.system('cls' if os.name == 'nt' else 'clear'),print(BotInfo), bot.send_message(msg.chat.id, '🧼 Консоль была очищена')),
                 'alt_tab': lambda msg: (pyautogui.hotkey('alt', 'tab'), bot.send_message(msg.chat.id, '🔄 Вкладка сменилась')),
                 'reboot': lambda msg: (bot.send_message(msg.chat.id, '🔄 Перезагружаю компьютер...'), os.system("shutdown -r -t 0")),
                 'sleep': lambda msg: (bot.send_message(msg.chat.id, '💤 Перевожу компьютер в спящий режим...'), sleep_computer()),
