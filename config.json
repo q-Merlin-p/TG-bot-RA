@@ -1,7 +1,7 @@
 {
-    "API_TOKEN": "6920090319:AAH--fD-Pez7ujaQ6XfYzmrKyFTHygWCJvI",
+    "API_TOKEN": "your token",
     
-    "ALLOWED_USERS": [6098929358],
+    "ALLOWED_USERS": [your user id],
 
     "PROGRAM_PATHS": {
         "MajesticLauncher": "C:\\Users\\Wayne\\AppData\\Local\\MajesticLauncher\\MajesticLauncher.exe",
@@ -15,8 +15,8 @@
     
     "notes_file": "notes.json",
 
-    "botVersion" : "22.0.3",
-    "dataUpdate" : "31.07.2024",
+    "botVersion" : "23.3.0",
+    "dataUpdate" : "11.08.2024",
     
     "urls": {
         "open_url_youtube": "https://www.youtube.com",

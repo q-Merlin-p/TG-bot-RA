@@ -1,14 +1,11 @@
 import telebot
-import tempfile
 import json
-from PIL  import ImageGrab 
-import os
-import psutil
-import webbrowser
 import pyautogui
 import subprocess
 import time
 import threading
+
+from .errorLogger import log_activity, logger
 
 with open('config.json', 'r') as config_file:
     config = json.load(config_file)
@@ -19,6 +16,10 @@ with open('config.json', 'r') as config_file:
 bot = telebot.TeleBot(API_TOKEN)
 
 def turn_on_MLauncer(message):
+
+    log_activity(message, "turn_on_MLauncer")
+    logger.info(f"User ID: {message.chat.id}, Action: turn_on_MLauncer")
+
     majestic_path = PROGRAM_PATHS['MajesticLauncher']
     pyautogui.moveTo(x=1000, y=530, duration=1)
     print("Курсор выставлен на x=1000, y=530")

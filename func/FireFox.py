@@ -1,14 +1,7 @@
 import telebot
-import tempfile
 import json
-from PIL  import ImageGrab 
-import os
-import psutil
-import webbrowser
-import pyautogui
 import subprocess
-import time
-import threading
+from .errorLogger import log_activity, logger
 
 with open('config.json', 'r') as config_file:
     config = json.load(config_file)
@@ -19,6 +12,10 @@ with open('config.json', 'r') as config_file:
 bot = telebot.TeleBot(API_TOKEN)
 
 def launch_FIREFOX(message):
+
+    log_activity(message, "launch_FIREFOX")
+    logger.info(f"User ID: {message.chat.id}, Action: launch_FIREFOX")
+
     FIREFOX_path = PROGRAM_PATHS['FIREFOX']
     command = f'"{FIREFOX_path}"'
     subprocess.run(command, shell=True)

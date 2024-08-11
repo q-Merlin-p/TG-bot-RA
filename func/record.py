@@ -1,14 +1,8 @@
 import telebot
-import tempfile
 import json
-from PIL  import ImageGrab 
-import os
-import psutil
-import webbrowser
 import pyautogui
-import subprocess
-import time
-import threading
+
+from .errorLogger import log_activity, logger
 
 with open('config.json', 'r') as config_file:
     config = json.load(config_file)
@@ -19,8 +13,13 @@ with open('config.json', 'r') as config_file:
 bot = telebot.TeleBot(API_TOKEN)
 
 def press_pause_button(message):
+
+    log_activity(message, "start_record")
+    logger.info(f"User ID: {message.chat.id}, Action: start_record")
+    
     try:
         pyautogui.press('pause')
         bot.send_message(message.chat.id, '✅ Клавиша "Pause" нажата!')
+
     except Exception as e:
         bot.send_message(message.chat.id, f'❌ Произошла ошибка: {str(e)}')

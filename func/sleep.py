@@ -1,14 +1,8 @@
 import telebot
-import tempfile
 import json
-from PIL  import ImageGrab 
 import os
-import psutil
-import webbrowser
-import pyautogui
-import subprocess
-import time
-import threading
+
+from .errorLogger import log_activity, logger
 
 with open('config.json', 'r') as config_file:
     config = json.load(config_file)
@@ -18,5 +12,8 @@ with open('config.json', 'r') as config_file:
 
 bot = telebot.TeleBot(API_TOKEN)
 
-def sleep_computer():
+def sleep_computer(message):
+    log_activity(message, "sleep_computer")
+    logger.info(f"User ID: {message.chat.id}, Action: sleep_computer")
+
     os.system("rundll32.exe powrprof.dll,SetSuspendState 0,1,0")

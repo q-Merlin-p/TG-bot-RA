@@ -1,0 +1,76 @@
+2024-08-11 05:27:14,952 - SMS received - User ID: 6098929358, Message: zxc
+2024-08-11 05:27:34,921 - Ошибка в callback_handler: get_url_from_action() missing 1 required positional argument: 'action'
+Traceback (most recent call last):
+  File "c:\Users\Wayne\Desktop\code\проекты\bots\tg\PcBot\TG-bot-RA\sss.py", line 268, in callback_handler
+    open_url(call.message, get_url_from_action(action))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: get_url_from_action() missing 1 required positional argument: 'action'
+2024-08-11 05:33:32,783 - User ID: 6098929358, Action: Открыть заготовленную ссылку, Message: 🌐 Выберите сайт:
+2024-08-11 05:33:36,255 - User ID: 6098929358, Action: try: Просмотр заметок, Message: 🗨️ Управление:
+2024-08-11 05:33:36,260 - Infinity polling exception: view_notes_command() missing 1 required positional argument: 'bot'
+2024-08-11 05:33:36,261 - Exception traceback:
+Traceback (most recent call last):
+  File "C:\Users\Wayne\AppData\Local\Programs\Python\Python312\Lib\site-packages\telebot\__init__.py", line 1090, in infinity_polling
+    self.polling(non_stop=True, timeout=timeout, long_polling_timeout=long_polling_timeout,
+  File "C:\Users\Wayne\AppData\Local\Programs\Python\Python312\Lib\site-packages\telebot\__init__.py", line 1178, in polling
+    self.__threaded_polling(non_stop=non_stop, interval=interval, timeout=timeout, long_polling_timeout=long_polling_timeout,
+  File "C:\Users\Wayne\AppData\Local\Programs\Python\Python312\Lib\site-packages\telebot\__init__.py", line 1253, in __threaded_polling
+    raise e
+  File "C:\Users\Wayne\AppData\Local\Programs\Python\Python312\Lib\site-packages\telebot\__init__.py", line 1215, in __threaded_polling
+    self.worker_pool.raise_exceptions()
+  File "C:\Users\Wayne\AppData\Local\Programs\Python\Python312\Lib\site-packages\telebot\util.py", line 150, in raise_exceptions
+    raise self.exception_info
+  File "C:\Users\Wayne\AppData\Local\Programs\Python\Python312\Lib\site-packages\telebot\util.py", line 93, in run
+    task(*args, **kwargs)
+  File "C:\Users\Wayne\AppData\Local\Programs\Python\Python312\Lib\site-packages\telebot\__init__.py", line 8707, in _run_middlewares_and_handler
+    result = handler['function'](message)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\Wayne\Desktop\code\проекты\bots\tg\PcBot\TG-bot-RA\sss.py", line 67, in handle_view_notes_command
+    view_notes_command(call, bot)
+TypeError: view_notes_command() missing 1 required positional argument: 'bot'
+
+2024-08-11 05:33:42,441 - User ID: 6098929358, Action: Command: /start, Message: /start
+2024-08-11 05:33:45,307 - User ID: 6098929358, Action: try: Заметки, Message: 💬 Заметки
+2024-08-11 05:33:46,767 - User ID: 6098929358, Action: try: Просмотр заметок, Message: 🗨️ Управление:
+2024-08-11 05:33:46,768 - Infinity polling exception: view_notes_command() missing 1 required positional argument: 'bot'
+2024-08-11 05:33:46,769 - Exception traceback:
+Traceback (most recent call last):
+  File "C:\Users\Wayne\AppData\Local\Programs\Python\Python312\Lib\site-packages\telebot\__init__.py", line 1090, in infinity_polling
+    self.polling(non_stop=True, timeout=timeout, long_polling_timeout=long_polling_timeout,
+  File "C:\Users\Wayne\AppData\Local\Programs\Python\Python312\Lib\site-packages\telebot\__init__.py", line 1178, in polling
+    self.__threaded_polling(non_stop=non_stop, interval=interval, timeout=timeout, long_polling_timeout=long_polling_timeout,
+  File "C:\Users\Wayne\AppData\Local\Programs\Python\Python312\Lib\site-packages\telebot\__init__.py", line 1253, in __threaded_polling
+    raise e
+  File "C:\Users\Wayne\AppData\Local\Programs\Python\Python312\Lib\site-packages\telebot\__init__.py", line 1215, in __threaded_polling
+    self.worker_pool.raise_exceptions()
+  File "C:\Users\Wayne\AppData\Local\Programs\Python\Python312\Lib\site-packages\telebot\util.py", line 150, in raise_exceptions
+    raise self.exception_info
+  File "C:\Users\Wayne\AppData\Local\Programs\Python\Python312\Lib\site-packages\telebot\util.py", line 93, in run
+    task(*args, **kwargs)
+  File "C:\Users\Wayne\AppData\Local\Programs\Python\Python312\Lib\site-packages\telebot\__init__.py", line 8707, in _run_middlewares_and_handler
+    result = handler['function'](message)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\Wayne\Desktop\code\проекты\bots\tg\PcBot\TG-bot-RA\sss.py", line 67, in handle_view_notes_command
+    view_notes_command(call, bot)
+TypeError: view_notes_command() missing 1 required positional argument: 'bot'
+
+2024-08-11 05:35:48,741 - User ID: 6098929358, Action: view_notes, Message: 🗨️ Управление:
+2024-08-11 05:35:51,203 - Ошибка в callback_handler: edit_note_command() missing 1 required positional argument: 'bot'
+Traceback (most recent call last):
+  File "c:\Users\Wayne\Desktop\code\проекты\bots\tg\PcBot\TG-bot-RA\sss.py", line 272, in callback_handler
+    edit_note_command(call, bot)
+TypeError: edit_note_command() missing 1 required positional argument: 'bot'
+2024-08-11 05:37:34,415 - User ID: 6098929358, Action: edit_note, Message: 📌 ZXC
+ZXCZXC
+2024-08-11 05:37:50,603 - User ID: 6098929358, Action: view_notes, Message: 🗨️ Управление:
+2024-08-11 05:37:52,253 - User ID: 6098929358, Action: try: Удалить заметку delete_note_3, Message: 📌 new gen of zxc?
+yes, its cursed
+2024-08-11 05:37:52,253 - User ID: 6098929358, Action: delete_note, Message: 📌 new gen of zxc?
+yes, its cursed
+2024-08-11 05:37:54,801 - User ID: 6098929358, Action: create_note, Message: 🗨️ Управление:
+2024-08-11 05:38:08,324 - User ID: 6098929358, Action: try: Заметки, Message: 💬 Заметки
+2024-08-11 05:38:09,238 - User ID: 6098929358, Action: view_notes, Message: 🗨️ Управление:
+2024-08-11 05:38:10,325 - User ID: 6098929358, Action: try: Удалить заметку delete_note_3, Message: 📌 zxc?
+tes?
+2024-08-11 05:38:10,325 - User ID: 6098929358, Action: delete_note, Message: 📌 zxc?
+tes?

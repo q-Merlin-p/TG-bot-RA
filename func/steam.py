@@ -1,14 +1,11 @@
 import telebot
-import tempfile
 import json
-from PIL  import ImageGrab 
-import os
-import psutil
-import webbrowser
 import pyautogui
 import subprocess
 import time
 import threading
+
+from .errorLogger import log_activity, logger
 
 with open('config.json', 'r') as config_file:
     config = json.load(config_file)
@@ -19,8 +16,13 @@ with open('config.json', 'r') as config_file:
 bot = telebot.TeleBot(API_TOKEN)
 
 def launch_steam(message):
+
+    log_activity(message, "launch_steam")
+    logger.info(f"User ID: {message.chat.id}, Action: launch_steam")
+
     steam_path = PROGRAM_PATHS['Steam']
     pyautogui.moveTo(x=700, y=530, duration=1)
+    
     print("Курсор выставлен на x=700, y=530")
 
     steam_thread = threading.Thread(target=start_steam, args=(steam_path, message))

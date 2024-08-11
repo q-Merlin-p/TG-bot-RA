@@ -1,14 +1,10 @@
 import telebot
-import tempfile
 import json
-from PIL  import ImageGrab 
 import os
 import psutil
-import webbrowser
-import pyautogui
 import subprocess
-import time
-import threading
+
+from .errorLogger import log_activity, logger
 
 with open('config.json', 'r') as config_file:
     config = json.load(config_file)
@@ -19,6 +15,10 @@ with open('config.json', 'r') as config_file:
 bot = telebot.TeleBot(API_TOKEN)
 
 def turn_on_discord(message):
+
+    log_activity(message, "turn_on_discord")
+    logger.info(f"User ID: {message.chat.id}, Action: turn_on_discord")
+
     discord_path = PROGRAM_PATHS['Discord']
     os.system(discord_path)
     bot.send_message(message.chat.id, '✅ Discord включен!')
@@ -47,6 +47,11 @@ def terminate_process_tree(pid):
         parent.kill()
 
 def turn_off_discord(message):
+
+    log_activity(message, "turn_off_discord")
+    logger.info(f"User ID: {message.chat.id}, Action: turn_off_discord")
+
+
     # Флаг для отслеживания состояния процесса DiscordPTB
     discord_found = False
     
@@ -72,11 +77,19 @@ def turn_off_discord(message):
         bot.send_message(message.chat.id, '❌ DiscordPTB не запущен.')
 
 def turn_on_telegram(message):
+
+    log_activity(message, "turn_on_telegram")
+    logger.info(f"User ID: {message.chat.id}, Action: turn_on_telegram")
+
     telegram_path = PROGRAM_PATHS['Telegram']
     subprocess.Popen(telegram_path)
     bot.send_message(message.chat.id, '✅ Telegram включен!')
 
 def turn_off_telegram(message):
+
+    log_activity(message, "turn_off_telegram")
+    logger.info(f"User ID: {message.chat.id}, Action: turn_off_telegram")
+
     for proc in psutil.process_iter(['pid', 'name']):
         if 'Telegram.exe' in proc.info['name']:
             pid = proc.info['pid']

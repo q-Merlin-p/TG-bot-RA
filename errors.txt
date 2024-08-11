@@ -1,0 +1,11 @@
+2024-08-11 05:27:34,921 - my_logger - ERROR - Ошибка в callback_handler: get_url_from_action() missing 1 required positional argument: 'action'
+Traceback (most recent call last):
+  File "c:\Users\Wayne\Desktop\code\проекты\bots\tg\PcBot\TG-bot-RA\sss.py", line 268, in callback_handler
+    open_url(call.message, get_url_from_action(action))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: get_url_from_action() missing 1 required positional argument: 'action'
+2024-08-11 05:35:51,203 - my_logger - ERROR - Ошибка в callback_handler: edit_note_command() missing 1 required positional argument: 'bot'
+Traceback (most recent call last):
+  File "c:\Users\Wayne\Desktop\code\проекты\bots\tg\PcBot\TG-bot-RA\sss.py", line 272, in callback_handler
+    edit_note_command(call, bot)
+TypeError: edit_note_command() missing 1 required positional argument: 'bot'

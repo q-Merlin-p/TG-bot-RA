@@ -1,14 +1,9 @@
 import telebot
-import tempfile
 import json
-from PIL  import ImageGrab 
-import os
 import psutil
-import webbrowser
-import pyautogui
-import subprocess
 import time
-import threading
+
+from .errorLogger import log_activity, logger
 
 with open('config.json', 'r') as config_file:
     config = json.load(config_file)
@@ -19,6 +14,10 @@ with open('config.json', 'r') as config_file:
 bot = telebot.TeleBot(API_TOKEN)
 
 def send_uptime(message):
+
+    log_activity(message, "send_uptime")
+    logger.info(f"User ID: {message.chat.id}, Action: send_uptime")
+
     uptime_seconds = time.time() - psutil.boot_time()
     uptime_string = format_uptime(uptime_seconds)
     bot.send_message(message.chat.id, f'🕒 Время работы ПК: {uptime_string}')

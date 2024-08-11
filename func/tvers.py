@@ -31,13 +31,13 @@ def get_telebot_version():
 
 BotInfo = f"""
     ╔═══════════════════════════════════════════════════╗
-    ║ Запущен бот {Fore.BLUE}{bot.get_me().username}{Style.RESET_ALL}                              ║
+    ║ Запущен бот {Fore.BLUE}{bot.get_me().username}{Style.RESET_ALL}                             ║
     ║ bot. Версия {Fore.MAGENTA}{botVersion}{Style.RESET_ALL} by {Fore.MAGENTA}{dataUpdate}{Style.RESET_ALL}                  ║
     ║ lib. Версия {Fore.GREEN}telebot: {get_telebot_version()}{Style.RESET_ALL}                       ║
     ║ Дата и время запуска: {Fore.CYAN}{current_datetime}{Style.RESET_ALL}  ║
     ║ Erorr loger активен: {Fore.GREEN if logger_active else Fore.RED}{'True' if logger_active else 'False'}{Style.RESET_ALL}                         ║
     ║ {Fore.LIGHTBLACK_EX}created by ds - @qqdelet | tg - @linzaoxi{Style.RESET_ALL}         ║
-    ╚═══════════════════════════════════════════════════╝)
+    ╚═══════════════════════════════════════════════════╝
 """
 
 

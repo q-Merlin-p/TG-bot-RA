@@ -2,8 +2,11 @@
 import json
 import telebot
 
+from .errorLogger import log_activity, logger
+
 with open('config.json', 'r') as config_file:
     config = json.load(config_file)
+    ALLOWED_USERS = config['ALLOWED_USERS']
     notes_file = config['notes_file']
 
 def load_notes():
@@ -21,53 +24,88 @@ def save_notes(notes):
         json.dump(notes, file, ensure_ascii=False, indent=4)
 
 def new_note_command(message, bot):
-    bot.reply_to(message, "Отлично! Введи заголовок новой заметки:")
-    bot.register_next_step_handler(message, process_title_step, bot)
+
+    log_activity(message, "create_note")
+    logger.info(f"User ID: {message.chat.id}, Action: create_note")
+    
+    if message.chat.id in ALLOWED_USERS:
+        bot.reply_to(message, "Отлично! Введи заголовок новой заметки:")
+        bot.register_next_step_handler(message, process_title_step, bot)
+    else:
+        bot.send_message(message.chat.id, "❌ У вас нет разрешения использовать эту команду.")
+
 
 def process_title_step(message, bot):
-    chat_id = message.chat.id
-    title = message.text
-    bot.send_message(chat_id, f"Отлично! Заголовок заметки: {title}. Теперь введи содержимое заметки:")
-    bot.register_next_step_handler(message, process_content_step, title, bot)
+    if message.chat.id in ALLOWED_USERS:
+        chat_id = message.chat.id
+        title = message.text
+        bot.send_message(chat_id, f"Отлично! Заголовок заметки: {title}. Теперь введи содержимое заметки:")
+        bot.register_next_step_handler(message, process_content_step, title, bot)
+    else:
+        bot.send_message(message.chat.id, "❌ У вас нет разрешения использовать эту команду.")
+
 
 def process_content_step(message, title, bot):
-    chat_id = message.chat.id
-    content = message.text
+    if message.chat.id in ALLOWED_USERS:
+        chat_id = message.chat.id
+        content = message.text
 
-    new_note = {
-        'title': title,
-        'content': content
-    }
+        new_note = {
+            'title': title,
+            'content': content
+        }
 
-    notes = load_notes()
-    notes.append(new_note)
-    save_notes(notes)
-    bot.send_message(chat_id, "Заметка успешно создан!")
-
-def view_notes_command(call, bot):
-    notes = load_notes()
-    if notes:
-        for i, note in enumerate(notes):
-            markup = telebot.types.InlineKeyboardMarkup()
-            markup.row(
-                telebot.types.InlineKeyboardButton("🗑️ Удалить заметку", callback_data=f'delete_note_{i}'),
-                telebot.types.InlineKeyboardButton("✏️ Редактировать заметку", callback_data=f'edit_note_{i}')
-            )
-            bot.send_message(call.message.chat.id, f"📌 <b>{note['title']}</b>\n{note['content']}", parse_mode='HTML', reply_markup=markup)
-    else:
-        bot.send_message(call.message.chat.id, "❌ Нет доступных заметок.")
-
-def delete_note_command(call, bot):
-    note_index = int(call.data.split('_')[2])
-    notes = load_notes()
-    if 0 <= note_index < len(notes):
-        deleted_note = notes.pop(note_index)
+        notes = load_notes()
+        notes.append(new_note)
         save_notes(notes)
-        bot.send_message(call.message.chat.id, f"✅ Заметка '{deleted_note['title']}' успешно удалена!")
+        bot.send_message(chat_id, "Заметка успешно создан!")
     else:
-        bot.send_message(call.message.chat.id, "❌ Не удалось удалить заметку. Попробуйте снова.")
+        bot.send_message(message.chat.id, "❌ У вас нет разрешения использовать эту команду.")
 
-def edit_note_command(call, bot):
+
+def view_notes_command(call,message, bot):
+
+    log_activity(message, "view_notes")
+    logger.info(f"User ID: {message.chat.id}, Action: view_notes")
+
+    if call.message.chat.id in ALLOWED_USERS:
+        notes = load_notes()
+        if notes:
+            for i, note in enumerate(notes):
+                markup = telebot.types.InlineKeyboardMarkup()
+                markup.row(
+                    telebot.types.InlineKeyboardButton("🗑️ Удалить заметку", callback_data=f'delete_note_{i}'),
+                    telebot.types.InlineKeyboardButton("✏️ Редактировать заметку", callback_data=f'edit_note_{i}')
+                )
+                bot.send_message(call.message.chat.id, f"📌 <b>{note['title']}</b>\n{note['content']}", parse_mode='HTML', reply_markup=markup)
+        else:
+            bot.send_message(call.message.chat.id, "❌ Нет доступных заметок.")
+    else:
+        bot.send_message(call.message.chat.id, "❌ У вас нет разрешения использовать эту команду.")
+
+
+def delete_note_command(call,message, bot):
+
+    log_activity(message, "delete_note")
+    logger.info(f"User ID: {message.chat.id}, Action: delete_note")
+
+    if call.message.chat.id in ALLOWED_USERS:
+        note_index = int(call.data.split('_')[2])
+        notes = load_notes()
+        if 0 <= note_index < len(notes):
+            deleted_note = notes.pop(note_index)
+            save_notes(notes)
+            bot.send_message(call.message.chat.id, f"Заметка '{deleted_note['title']}' успешно удалена!")
+        else:
+            bot.send_message(call.message.chat.id, "❌ Неверный индекс заметки.")
+    else:
+        bot.send_message(call.message.chat.id, "❌ У вас нет разрешения использовать эту команду.")
+
+def edit_note_command(call,message, bot):
+
+    log_activity(message, "edit_note")
+    logger.info(f"User ID: {message.chat.id}, Action: edit_note")
+
     note_index = int(call.data.split('_')[2])
     notes = load_notes()
     if 0 <= note_index < len(notes):

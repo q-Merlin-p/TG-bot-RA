@@ -22,6 +22,7 @@ bot = telebot.TeleBot(API_TOKEN)
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
+    log_activity(message, "Command: /start")
     print("Получена команда /start")
     print("ID пользователя, отправившего сообщение:", message.chat.id)
     print("ID разрешенных пользователей:", ALLOWED_USERS)
@@ -31,6 +32,7 @@ def send_welcome(message):
     else:
         bot.send_message(message.chat.id, '❌ Извините, у вас нет разрешения использовать этого бота.')
 
+
 def start_menu_markup():
     markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
     markup.add("💻Другие действия💻","🎮 Программы 🎵","🎮 Дота 2🃏")
@@ -39,6 +41,7 @@ def start_menu_markup():
 
 @bot.message_handler(regexp='Заметки')
 def note(message):
+    log_activity(message, "try: Заметки")
     if message.chat.id in ALLOWED_USERS:
         markup = note_actions_markup()
         bot.send_message(message.chat.id, '🗨️ Управление:', reply_markup=markup)
@@ -54,15 +57,21 @@ def note_actions_markup():
 
 @bot.message_handler(commands=['newnote'])
 def handle_new_note_command(message):
+    log_activity(message, "try: newnote")
     new_note_command(message, bot)
 
-@bot.callback_query_handler(func=lambda call: call.data == 'view_notes_command')
+@bot.callback_query_handler(func=lambda call: call.data.startswith('view_notes'))
 def handle_view_notes_command(call):
-    view_notes_command(call, bot)
+    view_notes_command(call, call.message, bot)  # Передаем все необходимые аргументы
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith('delete_note_'))
 def handle_delete_note_command(call):
-    delete_note_command(call, bot)
+    log_activity(call.message, f"try: Удалить заметку {call.data}")
+    delete_note_command(call, call.message, bot)
+
+@bot.message_handler(func=lambda message: True)
+def log_all_sms(message):
+    log_message(message)
 
 @bot.message_handler(regexp='другие действия')
 def other_actions(message):
@@ -96,8 +105,10 @@ def take_screenshot(message):
             path = tempfile.gettempdir() + 'screenshot.png'
             screenshot = ImageGrab.grab()
             screenshot.save(path, 'PNG')
+            
             bot.send_photo(message.chat.id, open(path, 'rb'))
             bot.send_message(message.chat.id, '📸 Скриншот отправлен!')
+            log_activity(message.chat.id, f"try: 📸 Сделать скриншот ")
         except Exception as e:
             logger.error(f'Ошибка при создании скриншота: {str(e)}', exc_info=True)
             bot.send_message(message.chat.id, f'❌ Произошла ошибка: {str(e)}')
@@ -190,59 +201,95 @@ def browser_markup():
         telebot.types.InlineKeyboardButton("🖼 Аниме", callback_data='open_url_anime'),
         telebot.types.InlineKeyboardButton("🐱‍👤 Аниме",callback_data="open_url_anime2"))
 
-    markup.add(telebot.types.InlineKeyboardButton("📬 ChatGPT", callback_data='open_url_GPT'))
-    markup.add(telebot.types.InlineKeyboardButton("☎ Nekto", callback_data='open_url_NEKTO'))
-
+    markup.row(
+        telebot.types.InlineKeyboardButton("📬 ChatGPT", callback_data='open_url_GPT'),
+        telebot.types.InlineKeyboardButton("☎ Nekto", callback_data='open_url_NEKTO'))
+    
+    markup.add(telebot.types.InlineKeyboardButton("🌐 Открытие по ссылке", callback_data='custom_url'))
     return markup
+
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback_handler(call):
     if call.message.chat.id in ALLOWED_USERS:
         action = call.data
         try:
-            actions = {
-                'new_note_command': lambda msg: new_note_command(msg, bot),
-                'turn_on_discord': turn_on_discord,
-                'turn_off_discord': turn_off_discord,
-                'turn_on_telegram': turn_on_telegram,
-                'turn_off_telegram': turn_off_telegram,
-                'turn_on_MLauncer': turn_on_MLauncer,
-                'launch_dota_two': launch_dota_two,
-                'launch_steam': launch_steam,
-                'launch_vsc': launch_vsc,
-                'launch_FIREFOX': launch_FIREFOX,
-                'lauch_rust': lauch_rust,
-                'accept_game': accept_game,
-                'ban_hero': ban_hero,
-                'pick_hero': pick_hero,
-                'pick_hero_rez': pick_hero_rez,
-                'cls': lambda msg: (os.system('cls' if os.name == 'nt' else 'clear'),print(BotInfo), bot.send_message(msg.chat.id, '🧼 Консоль была очищена')),
-                'alt_tab': lambda msg: (pyautogui.hotkey('alt', 'tab'), bot.send_message(msg.chat.id, '🔄 Вкладка сменилась')),
-                'reboot': lambda msg: (bot.send_message(msg.chat.id, '🔄 Перезагружаю компьютер...'), os.system("shutdown -r -t 0")),
-                'sleep': lambda msg: (bot.send_message(msg.chat.id, '💤 Перевожу компьютер в спящий режим...'), sleep_computer()),
-                'shutdown': lambda msg: (bot.send_message(msg.chat.id, '❌ Выключаю компьютер...'), os.system("shutdown -s -t 0")),
-                'take_screenshot': take_screenshot,
-                'press_pause_button': press_pause_button,
-                'uptime': send_uptime,
-                'edit_note_command': lambda msg: edit_note_command(msg, bot)
-            }
-
-            if action.startswith('open_url_'):
-                open_url(call.message, get_url_from_action(action))
-            elif action.startswith('delete_note_'):
-                delete_note_command(call, bot)
-            elif action.startswith('edit_note_'):
-                edit_note_command(call, bot)
+            if action == 'custom_url':
+                msg = bot.send_message(call.message.chat.id, '🌐 Пожалуйста, введите ссылку для открытия:')
+                bot.register_next_step_handler(msg, open_url_handler)
             else:
-                if action in actions:
-                    actions[action](call.message)
+                actions = {
+                    'new_note_command': lambda msg: new_note_command(msg, bot),
+                    'turn_on_discord': turn_on_discord,
+                    'turn_off_discord': turn_off_discord,
+                    'turn_on_telegram': turn_on_telegram,
+                    'turn_off_telegram': turn_off_telegram,
+                    'turn_on_MLauncer': turn_on_MLauncer,
+                    'launch_dota_two': launch_dota_two,
+                    'launch_steam': launch_steam,
+                    'launch_vsc': launch_vsc,
+                    'launch_FIREFOX': launch_FIREFOX,
+                    'lauch_rust': lauch_rust,
+                    'accept_game': accept_game,
+                    'exet_dota':exet_dota,
+                    'ban_hero': ban_hero,
+                    'pick_hero': pick_hero,
+                    'pick_hero_rez': pick_hero_rez,
+                    'cls': lambda msg: (
+                        os.system('cls' if os.name == 'nt' else 'clear'),
+                        print(BotInfo),
+                        bot.send_message(msg.chat.id, '🧼 Консоль была очищена')
+                    ),
+                    'alt_tab': lambda msg: (
+                        pyautogui.hotkey('alt', 'tab'),
+                        bot.send_message(msg.chat.id, '🔄 Вкладка сменилась')
+                    ),
+                    'reboot': lambda msg: (
+                        bot.send_message(msg.chat.id, '🔄 Перезагружаю компьютер...'),
+                        os.system("shutdown -r -t 0")
+                    ),
+                    'sleep': lambda msg: (
+                        bot.send_message(msg.chat.id, '💤 Перевожу компьютер в спящий режим...'),
+                        sleep_computer()
+                    ),
+                    'shutdown': lambda msg: (
+                        bot.send_message(msg.chat.id, '❌ Выключаю компьютер...'),
+                        os.system("shutdown -s -t 0")
+                    ),
+                    'take_screenshot': take_screenshot,
+                    'press_pause_button': press_pause_button,
+                    'uptime': send_uptime,
+                    'edit_note_command': lambda msg: edit_note_command(msg, bot)
+                }
+
+                if action.startswith('open_url_'):
+                    open_url(call.message, get_url_from_action(call.message, action))
+
+                elif action.startswith('delete_note_'):
+                    delete_note_command(call, call.message, bot)
+
+                elif action.startswith('edit_note_'):
+                    edit_note_command(call, call.message, bot)
+
                 else:
-                    bot.send_message(call.message.chat.id, '❌ Неизвестное действие.')
+                    if action in actions:
+                        actions[action](call.message)
+                    else:
+                        bot.send_message(call.message.chat.id, '❌ Неизвестное действие.')
+                        
         except Exception as e:
             logger.error(f'Ошибка в callback_handler: {str(e)}', exc_info=True)
             bot.send_message(call.message.chat.id, f'❌ Произошла ошибка: {str(e)}')
     else:
         bot.send_message(call.message.chat.id, '❌ Извините, у вас нет разрешения использовать этого бота.')
+
+def open_url_handler(message):
+    url = message.text[len('/open '):].strip()  
+    if url:
+        response = open_custom_url(url, message.chat.id) 
+        bot.send_message(message.chat.id, response)
+    else:
+        bot.send_message(message.chat.id, '❌ Пожалуйста, укажите URL.')
 
 
 bot.infinity_polling()
