@@ -41,12 +41,13 @@ def start_menu_markup():
 
 @bot.message_handler(regexp='Заметки')
 def note(message):
-    log_activity(message, "try: Заметки")
+    log_activity(message, "Clicked: Заметки")
     if message.chat.id in ALLOWED_USERS:
         markup = note_actions_markup()
         bot.send_message(message.chat.id, '🗨️ Управление:', reply_markup=markup)
     else:
         bot.send_message(message.chat.id, '❌ Извините, у вас нет разрешения использовать этого бота.')
+
 
 def note_actions_markup():
     markup = telebot.types.InlineKeyboardMarkup()
@@ -56,30 +57,28 @@ def note_actions_markup():
     return markup
 
 @bot.message_handler(commands=['newnote'])
+@check_user_permission
 def handle_new_note_command(message):
-    log_activity(message, "try: newnote")
+    log_activity(message, "Clicked: newnote")
     new_note_command(message, bot)
 
-@bot.callback_query_handler(func=lambda call: call.data.startswith('view_notes'))
+@bot.callback_query_handler(func=lambda call: call.data == 'view_notes_command')
+@check_user_permission
 def handle_view_notes_command(call):
-    view_notes_command(call, call.message, bot)  # Передаем все необходимые аргументы
+    log_activity(call.message, "Clicked: Просмотр заметок")
+    view_notes_command(call, call.message, bot)
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith('delete_note_'))
+@check_user_permission
 def handle_delete_note_command(call):
-    log_activity(call.message, f"try: Удалить заметку {call.data}")
+    log_activity(call.message, f"Clicked: Удалить заметку {call.data}")
     delete_note_command(call, call.message, bot)
 
-@bot.message_handler(func=lambda message: True)
-def log_all_sms(message):
-    log_message(message)
-
 @bot.message_handler(regexp='другие действия')
+@check_user_permission
 def other_actions(message):
-    if message.chat.id in ALLOWED_USERS:
-        markup = other_actions_markup()
-        bot.send_message(message.chat.id, '💻 Выберите действие:', reply_markup=markup)
-    else:
-        bot.send_message(message.chat.id, '❌ Извините, у вас нет разрешения использовать этого бота.')
+    markup = other_actions_markup()
+    bot.send_message(message.chat.id, '💻 Выберите действие:', reply_markup=markup)
 
 def other_actions_markup():
     markup = telebot.types.InlineKeyboardMarkup()
@@ -99,21 +98,17 @@ def other_actions_markup():
     return markup
 
 @bot.message_handler(regexp='сделать скриншот')
+@check_user_permission
 def take_screenshot(message):
-    if message.chat.id in ALLOWED_USERS:
-        try:
-            path = tempfile.gettempdir() + 'screenshot.png'
-            screenshot = ImageGrab.grab()
-            screenshot.save(path, 'PNG')
-            
-            bot.send_photo(message.chat.id, open(path, 'rb'))
-            bot.send_message(message.chat.id, '📸 Скриншот отправлен!')
-            log_activity(message.chat.id, f"try: 📸 Сделать скриншот ")
-        except Exception as e:
-            logger.error(f'Ошибка при создании скриншота: {str(e)}', exc_info=True)
-            bot.send_message(message.chat.id, f'❌ Произошла ошибка: {str(e)}')
-    else:
-        bot.send_message(message.chat.id, '❌ Извините, у вас нет разрешения использовать этого бота.')
+    try:
+        path = os.path.join(tempfile.gettempdir(), 'screenshot.png')
+        screenshot = ImageGrab.grab()
+        screenshot.save(path, 'PNG')
+        bot.send_photo(message.chat.id, open(path, 'rb'))
+        log_activity(message, "Clicked: 📸 Сделать скриншот")
+    except Exception as e:
+        logger.error(f'Ошибка при создании скриншота: {str(e)}', exc_info=True)
+        bot.send_message(message.chat.id, f'❌ Произошла ошибка: {str(e)}')
 
 
 @bot.message_handler(regexp='Программы')
@@ -263,33 +258,37 @@ def callback_handler(call):
                 }
 
                 if action.startswith('open_url_'):
-                    open_url(call.message, get_url_from_action(call.message, action))
+                    url = get_url_from_action(call.message, action)  # Передаем оба аргумента
+                    open_url(call.message, url)
 
                 elif action.startswith('delete_note_'):
-                    delete_note_command(call, call.message, bot)
+                    delete_note_command(call, bot)
 
                 elif action.startswith('edit_note_'):
-                    edit_note_command(call, call.message, bot)
-
+                    edit_note_command(call, bot)
+                    
                 else:
                     if action in actions:
                         actions[action](call.message)
+
                     else:
                         bot.send_message(call.message.chat.id, '❌ Неизвестное действие.')
-                        
+
         except Exception as e:
             logger.error(f'Ошибка в callback_handler: {str(e)}', exc_info=True)
             bot.send_message(call.message.chat.id, f'❌ Произошла ошибка: {str(e)}')
+            
     else:
         bot.send_message(call.message.chat.id, '❌ Извините, у вас нет разрешения использовать этого бота.')
 
 def open_url_handler(message):
-    url = message.text[len('/open '):].strip()  
+    url = message.text[len('/open '):].strip()
     if url:
-        response = open_custom_url(url, message.chat.id) 
+        response = open_custom_url(url, message.chat.id)  
         bot.send_message(message.chat.id, response)
     else:
         bot.send_message(message.chat.id, '❌ Пожалуйста, укажите URL.')
+
 
 
 bot.infinity_polling()

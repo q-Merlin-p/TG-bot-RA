@@ -64,7 +64,6 @@ def process_content_step(message, title, bot):
 
 
 def view_notes_command(call,message, bot):
-
     log_activity(message, "view_notes")
     logger.info(f"User ID: {message.chat.id}, Action: view_notes")
 
@@ -85,7 +84,6 @@ def view_notes_command(call,message, bot):
 
 
 def delete_note_command(call,message, bot):
-
     log_activity(message, "delete_note")
     logger.info(f"User ID: {message.chat.id}, Action: delete_note")
 
@@ -101,10 +99,9 @@ def delete_note_command(call,message, bot):
     else:
         bot.send_message(call.message.chat.id, "❌ У вас нет разрешения использовать эту команду.")
 
-def edit_note_command(call,message, bot):
-
-    log_activity(message, "edit_note")
-    logger.info(f"User ID: {message.chat.id}, Action: edit_note")
+def edit_note_command(call, bot):
+    log_activity(call.message, "edit_note")  # Изменено на call.message
+    logger.info(f"User ID: {call.message.chat.id}, Action: edit_note")
 
     note_index = int(call.data.split('_')[2])
     notes = load_notes()

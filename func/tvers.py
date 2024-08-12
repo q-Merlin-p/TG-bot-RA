@@ -10,6 +10,7 @@ init()
 
 with open('config.json', 'r') as config_file:
     config = json.load(config_file)
+    ALLOWED_USERS = config['ALLOWED_USERS']
     API_TOKEN = config['API_TOKEN']
     botVersion = config['botVersion']
     dataUpdate = config['dataUpdate']
@@ -28,6 +29,21 @@ def get_telebot_version():
         return 'Не удалось определить версию'
     except subprocess.CalledProcessError:
         return 'Не удалось определить версию'
+
+def check_user_permission(func):
+    def wrapper(arg):
+        chat_id = None
+        
+        if isinstance(arg, telebot.types.CallbackQuery):
+            chat_id = arg.message.chat.id
+        elif isinstance(arg, telebot.types.Message):
+            chat_id = arg.chat.id
+
+        if chat_id not in ALLOWED_USERS:
+            bot.send_message(chat_id, '❌ Извините, у вас нет разрешения использовать этого бота.')
+            return
+        return func(arg)
+    return wrapper
 
 BotInfo = f"""
     ╔═══════════════════════════════════════════════════╗
