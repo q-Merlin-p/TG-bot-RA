@@ -1,4 +1,4 @@
-import tempfile
+eeeeimport tempfile
 import subprocess
 import json
 import telebot
@@ -52,7 +52,7 @@ BotInfo = f"""
     ║ lib. Версия {Fore.GREEN}telebot: {get_telebot_version()}{Style.RESET_ALL}                       ║
     ║ Дата и время запуска: {Fore.CYAN}{current_datetime}{Style.RESET_ALL}  ║
     ║ Erorr loger активен: {Fore.GREEN if logger_active else Fore.RED}{'True' if logger_active else 'False'}{Style.RESET_ALL}                         ║
-    ║ {Fore.LIGHTBLACK_EX}created by ds - @qqdelet | tg - @linzaoxi{Style.RESET_ALL}         ║
+    ║ {Fore.LIGHTBLACK_EX}created by ds - devxzcd {Style.RESET_ALL}               ║
     ╚═══════════════════════════════════════════════════╝
 """
 
