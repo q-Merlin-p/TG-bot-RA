@@ -10,14 +10,14 @@
 Минимальные зависимости (Python 3.9+):
 
 ```bash
-pip install pyTelegramBotAPI pyautogui psutil Pillow pyperclip
+pip install telebot pyautogui psutil Pillow pyperclip
 ````
 
 ### Используемые библиотеки:
 
 | Библиотека         | Назначение                            |
 | ------------------ | ------------------------------------- |
-| `pyTelegramBotAPI` | Telegram Bot API                      |
+| `telebot` | Telegram Bot API                               |
 | `pyautogui`        | Управление экраном и мышью, скриншоты |
 | `psutil`           | Информация о процессах и системе      |
 | `Pillow`           | Обработка изображений                 |
