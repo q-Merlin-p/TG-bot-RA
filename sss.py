@@ -37,6 +37,7 @@ def start_menu_markup():
     markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
     markup.add("💻Другие действия💻","🎮 Программы 🎵","🎮 Дота 2🃏")
     markup.add("💬 Заметки","🗨️ Общение","🌐 Браузер")
+    markup.add("🖱️ Мышь", "⌨️ Клавиатура")
     return markup
 
 @bot.message_handler(regexp='Заметки')
@@ -204,6 +205,56 @@ def browser_markup():
     return markup
 
 
+@bot.message_handler(regexp='Мышь')
+def mouse_control(message):
+    if message.chat.id in ALLOWED_USERS:
+        markup = mouse_control_markup()
+        bot.send_message(message.chat.id, '🖱️ Управление мышью:', reply_markup=markup)
+    else:
+        bot.send_message(message.chat.id, '❌ Извините, у вас нет разрешения использовать этого бота.')
+
+def mouse_control_markup():
+    markup = telebot.types.InlineKeyboardMarkup()
+    markup.row(
+        telebot.types.InlineKeyboardButton("🖱️ ЛКМ", callback_data='click_left'),
+        telebot.types.InlineKeyboardButton("🖱️ ПКМ", callback_data='click_right')
+    )
+    return markup
+
+@bot.message_handler(commands=['move'])
+def move_cursor_command(message):
+    if message.chat.id in ALLOWED_USERS:
+        try:
+            args = message.text.split()[1:]
+            if len(args) == 2:
+                x, y = int(args[0]), int(args[1])
+                success, msg = move_cursor_to(x, y)
+                bot.reply_to(message, msg)
+            else:
+                bot.reply_to(message, "❌ Использование: /move x y")
+        except ValueError:
+            bot.reply_to(message, "❌ Координаты должны быть числами.")
+    else:
+        bot.reply_to(message, "❌ У вас нет разрешения.")
+
+
+@bot.message_handler(regexp='Клавиатура')
+def keyboard_control_handler(message):
+    if message.chat.id in ALLOWED_USERS:
+        msg = bot.send_message(message.chat.id, "⌨️ Введите команду для клавиатуры (например: 'w * 3', 'ctrl + v', 'Hello world'):")
+        bot.register_next_step_handler(msg, process_keyboard_command)
+    else:
+        bot.send_message(message.chat.id, '❌ Извините, у вас нет разрешения использовать этого бота.')
+
+def process_keyboard_command(message):
+    if message.chat.id in ALLOWED_USERS:
+        command = message.text
+        result = execute_keyboard_command(command)
+        bot.send_message(message.chat.id, f"✅ {result}")
+    else:
+        bot.send_message(message.chat.id, '❌ Извините, у вас нет разрешения.')
+
+
 @bot.callback_query_handler(func=lambda call: True)
 def callback_handler(call):
     if call.message.chat.id in ALLOWED_USERS:
@@ -254,7 +305,15 @@ def callback_handler(call):
                     'take_screenshot': take_screenshot,
                     'press_pause_button': press_pause_button,
                     'uptime': send_uptime,
-                    'edit_note_command': lambda msg: edit_note_command(msg, bot)
+                    'edit_note_command': lambda msg: edit_note_command(msg, bot),
+                    'click_left': lambda msg: (
+                        click_mouse('left'),
+                        bot.send_message(msg.chat.id, '🖱️ ЛКМ нажат')
+                    ),
+                    'click_right': lambda msg: (
+                        click_mouse('right'),
+                        bot.send_message(msg.chat.id, '🖱️ ПКМ нажат')
+                    )
                 }
 
                 if action.startswith('open_url_'):

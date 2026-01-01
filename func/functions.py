@@ -13,5 +13,7 @@ from .record import press_pause_button
 from .tvers import get_telebot_version,check_user_permission, BotInfo
 from .errorLogger import is_logger_active, log_activity, log_message, logger
 from .notes import new_note_command, delete_note_command, view_notes_command, load_notes, save_notes, edit_note_command, process_edit_title_step, process_edit_content_step
+from .mouse import move_cursor_to, click_mouse, get_mouse_position
+from .keyboard_control import execute_keyboard_command
 
 
