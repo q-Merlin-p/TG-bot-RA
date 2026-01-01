@@ -1,0 +1,5 @@
+pyTelegramBotAPI
+pyautogui
+colorama
+psutil
+Pillow
