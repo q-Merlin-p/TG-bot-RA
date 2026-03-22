@@ -1,4 +1,4 @@
-eeeeimport tempfile
+import tempfile
 import subprocess
 import json
 import telebot
